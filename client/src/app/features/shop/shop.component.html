@@ -1,5 +1,5 @@
 <div class="flex flex-col gap-3">
-    <div class="flex justify-between">
+    <div class="flex justify-between items-center">
         <mat-paginator 
             (page)="handlePageEvent($event)"
             [length]="products?.count"
@@ -9,12 +9,29 @@
             [pageIndex]="shopParams.pageNumber - 1"
             aria-label="Select page">
         </mat-paginator>
+        <form 
+            class="realative flex items-center w-full max-w-md mx-4"
+            #searchForm="ngForm" 
+            (ngSubmit)="onSearchChange()">
+            <div class="flex border border-gray-300 rounded-lg w-full pl-3 match-input-height">
+                <input 
+                    type="search" 
+                    placeholder="Search"
+                    class="w-full border border-transparent"
+                    name="search"
+                    [(ngModel)]="shopParams.search"/>
+                <button mat-icon-button type="submit">
+                    <mat-icon>search</mat-icon>
+                </button>
+            </div>
+           
+        </form>
         <div class="flex gap-3">
-            <button mat-stroked-button (click)="openFiltersDialog()">
+            <button class="match-input-height" mat-stroked-button (click)="openFiltersDialog()">
                 <mat-icon>filter_list</mat-icon>
                 Filters
             </button>
-            <button mat-stroked-button [matMenuTriggerFor]="sortMenu">
+            <button class="match-input-height" mat-stroked-button [matMenuTriggerFor]="sortMenu">
                 <mat-icon>swap_vert</mat-icon>
                 Sort
             </button>

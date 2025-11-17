@@ -4,3 +4,7 @@
 .container {
     @apply p-6 m-auto
 }
+
+.text-primary {
+    @apply text-blue-700
+}
