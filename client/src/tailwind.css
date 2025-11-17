@@ -1,4 +1,5 @@
-@import "tailwindcss";
+/*important flag indicates that tailwind styles are more important than other, e.g. angular materials style*/
+@import "tailwindcss" important;
 
 .container {
     @apply p-6 m-auto
