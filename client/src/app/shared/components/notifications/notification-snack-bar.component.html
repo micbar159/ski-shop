@@ -1,0 +1,10 @@
+<div class="flex flex-row justify-between">
+  <span matSnackBarLabel>
+      {{message}}
+  </span>
+  <span matSnackBarActions>
+    <button matButton matSnackBarAction (click)="snackBarRef.dismiss()">
+      <mat-icon class="m-0 p-0">close</mat-icon>
+  </button>
+  </span>
+</div>
