@@ -1,5 +1,5 @@
 import { inject, Component, OnInit } from '@angular/core';
-import { Product } from '../../shared/models/products';
+import { Product } from '../../shared/models/product';
 import { ShopService } from '../../core/services/shop';
 import { ProductItemComponent } from "./product-item/product-item.component";
 import { MatDialog } from "@angular/material/dialog"

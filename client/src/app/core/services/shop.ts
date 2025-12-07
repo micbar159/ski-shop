@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Product } from '../../shared/models/products';
+import { Product } from '../../shared/models/product';
 import { Pagination } from '../../shared/models/pagination';
 import { Observable } from 'rxjs';
 import { ShopParams } from '../../shared/models/shopParams';

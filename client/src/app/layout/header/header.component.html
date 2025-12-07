@@ -12,8 +12,8 @@
             <a routerLink="/test-error" routerLinkActvate="active">Errors</a>
         </nav>
         <div class="flex gap-3 align-middle">
-            <a class="flex items-center">
-                <mat-icon matBadge="5" matBadgeSize="large">shopping_cart</mat-icon>
+            <a routerLink="/cart" routerLinkActive="active" class="flex items-center">
+                <mat-icon matBadge="{{cartService.itemCount()}}" matBadgeSize="large">shopping_cart</mat-icon>
             </a>    
             <button mat-stroked-button>Sign-in</button>
             <button mat-stroked-button>Sign-up</button>
