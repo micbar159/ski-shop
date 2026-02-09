@@ -4,7 +4,6 @@ import { RouterLink } from "@angular/router";
 import { MatIconButton, MatAnchor } from "@angular/material/button";
 import { MatIcon } from "@angular/material/icon";
 import { CurrencyPipe } from '@angular/common';
-import { CdkAutofill } from "@angular/cdk/text-field";
 import { CartService } from '../../../core/services/cart';
 
 @Component({
@@ -14,8 +13,7 @@ import { CartService } from '../../../core/services/cart';
     MatIconButton,
     MatIcon,
     CurrencyPipe,
-    MatAnchor,
-    CdkAutofill
+    MatAnchor    
 ],
   templateUrl: './cart-item.component.html',
   styleUrl: './cart-item.component.scss',

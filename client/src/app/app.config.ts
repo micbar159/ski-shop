@@ -8,13 +8,18 @@ import { loadingInterceptor } from './core/interceptors/loading-interceptor';
 import { InitService } from './core/services/init';
 import { lastValueFrom } from 'rxjs';
 import { Cart } from './shared/models/cart';
+import { authInterceptor } from './core/interceptors/auth-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([errorInterceptor, loadingInterceptor])),
+    provideHttpClient(withInterceptors([
+      errorInterceptor, 
+      loadingInterceptor, 
+      authInterceptor
+    ])),
     provideAppInitializer(() => {
       const initService = inject(InitService);
       return lastValueFrom(initService.init()).finally(() => {
