@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Cart, CartItem } from '../../shared/models/cart';
 import { Product } from '../../shared/models/product';
 import { map } from 'rxjs';
+import { DeliveryMethod } from '../../shared/models/deliveryMethod';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +13,7 @@ export class CartService {
   baseUrl = environment.apiUrl;
   private http = inject(HttpClient);
   cart = signal<Cart | null>(null);
+  selectedDelivery = signal<DeliveryMethod | null>(null);
   itemCount = computed(() => {
     return this.cart()?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
   });
@@ -19,7 +21,8 @@ export class CartService {
     const cart = this.cart();
     if (!cart) return null;
     const subtotal = cart.items.reduce((sum, item) => sum = sum + item.quantity * item.price, 0);
-    const shipping = 0;
+    const delivery = this.selectedDelivery();
+    const shipping = delivery ? delivery.price : 0;
     const discount = 0;
     return {
       subtotal,
@@ -83,7 +86,7 @@ export class CartService {
       this.setCart(cart);
     }
   }
-
+  
   private deleteCart() {
     this.http.delete(this.baseUrl + 'cart?id=' + this.cart()?.id).subscribe({
       next: () => {
