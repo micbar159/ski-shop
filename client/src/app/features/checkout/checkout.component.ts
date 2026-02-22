@@ -1,10 +1,10 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { OrderSummaryComponent } from "../../shared/components/order-summary/order-summary.component";
-import { MatStepperModule } from '@angular/material/stepper';
-import { RouterLink } from "@angular/router";
+import { MatStepper, MatStepperModule } from '@angular/material/stepper';
+import { Router, RouterLink } from "@angular/router";
 import { MatAnchor, MatButton } from "@angular/material/button";
 import { StripeService } from '../../core/services/stripeService';
-import { StripeAddressElement, StripeAddressElementChangeEvent, StripePaymentElement, StripePaymentElementChangeEvent } from '@stripe/stripe-js';
+import { ConfirmationToken, StripeAddressElement, StripeAddressElementChangeEvent, StripePaymentElement, StripePaymentElementChangeEvent } from '@stripe/stripe-js';
 import { NotificationService } from '../../core/services/notificationService';
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox'
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
@@ -15,6 +15,7 @@ import { CheckoutDeliveryComponent } from "./checkout-delivery/checkout-delivery
 import { CheckoutReviewComponent } from "./checkout-review/checkout-review.component";
 import { CartService } from '../../core/services/cart';
 import { CurrencyPipe } from '@angular/common';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-checkout',
@@ -28,7 +29,8 @@ import { CurrencyPipe } from '@angular/common';
     MatCheckboxModule,
     CheckoutDeliveryComponent,
     CheckoutReviewComponent,
-    CurrencyPipe
+    CurrencyPipe,
+    MatProgressSpinnerModule
 ],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss',
@@ -37,6 +39,7 @@ export class CheckoutComponent implements OnInit{
   private stripeService = inject(StripeService);
   private notificationService = inject(NotificationService);
   private accountService = inject(Account);
+  private router = inject(Router);
   cartService = inject(CartService)
   addressElement?: StripeAddressElement;
   paymentElement?: StripePaymentElement;
@@ -44,6 +47,8 @@ export class CheckoutComponent implements OnInit{
   completionStatus = signal<{address: boolean, payment: boolean, delivery: boolean}>(
     {address: false, payment: false, delivery: false}
   )
+  confirmationToken?: ConfirmationToken;
+  loading = false;
   
   async ngOnInit() {
     try {
@@ -85,6 +90,21 @@ export class CheckoutComponent implements OnInit{
     this.stripeService.disposeElements();
   }
 
+  async getConfirmationToken() {
+    try {
+      if (Object.values(this.completionStatus()).every(status => status === true)) {
+        const result = await this.stripeService.createConfirmationToken();       
+        if (result.error) {
+          throw new Error(result.error.message);
+        }
+        this.confirmationToken = result.confirmationToken;
+        console.log(this.confirmationToken);
+      }
+    } catch(error: any) {
+      this.notificationService.showError(error.message);
+    }    
+  }
+
   async onStepChange(event: StepperSelectionEvent) {
     if (event.selectedIndex === 1 ) {
       if (this.saveAddress) {
@@ -98,6 +118,31 @@ export class CheckoutComponent implements OnInit{
     }
     if (event.selectedIndex === 2) {
       await firstValueFrom(this.stripeService.createOrUpdatePaymentIntent());
+    }
+    if (event.selectedIndex === 3) {
+      await this.getConfirmationToken();
+    }
+  }
+
+  async confirmPayment(stepper: MatStepper) {
+    this.loading = true;
+    try {
+      if (this.confirmationToken) {
+        const result = await this.stripeService.confirmPayment(this.confirmationToken);
+        if (result.error) {
+          throw new Error(result.error.message)
+        } else {
+          this.cartService.deleteCart();
+          this.cartService.selectedDelivery.set(null);
+          this.router.navigateByUrl('/checkout/success');
+        }
+      }
+
+    } catch (error: any) {
+      this.notificationService.showError(error.message || 'Something went wrong');
+      stepper.previous();
+    } finally {
+      this.loading = false;
     }
   }
 

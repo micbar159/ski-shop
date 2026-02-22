@@ -87,7 +87,7 @@ export class CartService {
     }
   }
   
-  private deleteCart() {
+  deleteCart() {
     this.http.delete(this.baseUrl + 'cart?id=' + this.cart()?.id).subscribe({
       next: () => {
         localStorage.removeItem('cart_id');
