@@ -1,10 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { OrderSummaryComponent } from "../../shared/components/order-summary/order-summary.component";
 import { MatStepperModule } from '@angular/material/stepper';
 import { RouterLink } from "@angular/router";
 import { MatAnchor, MatButton } from "@angular/material/button";
 import { StripeService } from '../../core/services/stripeService';
-import { StripeAddressElement, StripePaymentElement } from '@stripe/stripe-js';
+import { StripeAddressElement, StripeAddressElementChangeEvent, StripePaymentElement, StripePaymentElementChangeEvent } from '@stripe/stripe-js';
 import { NotificationService } from '../../core/services/notificationService';
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox'
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
@@ -41,16 +41,44 @@ export class CheckoutComponent implements OnInit{
   addressElement?: StripeAddressElement;
   paymentElement?: StripePaymentElement;
   saveAddress = false;
-
+  completionStatus = signal<{address: boolean, payment: boolean, delivery: boolean}>(
+    {address: false, payment: false, delivery: false}
+  )
+  
   async ngOnInit() {
     try {
       this.addressElement = await this.stripeService.createAddressElement();
       this.addressElement.mount('#address-element');
+      this.addressElement.on('change', this.handleAddressChange);
+
       this.paymentElement = await this.stripeService.createPaymentElement();
       this.paymentElement.mount('#payment-element');
+      this.paymentElement.on('change', this.handlePaymentChange);
+      
     } catch (error: any) {
       this.notificationService.showError(error.message)
     }
+  }
+
+  handleAddressChange = (event: StripeAddressElementChangeEvent) => {
+    this.completionStatus.update(state => {
+      state.address = event.complete;
+      return state;
+    })
+  }
+
+  handlePaymentChange = (event: StripePaymentElementChangeEvent) => {
+    this.completionStatus.update(state => {
+      state.payment = event.complete;
+      return state;
+    })
+  }
+
+   handleDeliveryChange (event : boolean) {
+    this.completionStatus.update(state => {
+      state.delivery = event;
+      return state;
+    })    
   }
 
   ngOnDestroy() {
