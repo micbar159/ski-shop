@@ -4,7 +4,9 @@ using SkiShop.API.Middleware;
 using SkiShop.API.SignalR;
 using SkiShop.Core.Entities;
 using SkiShop.Core.Interfaces;
+using SkiShop.Infrastructure;
 using SkiShop.Infrastructure.Data;
+using SkiShop.Infrastructure.Options;
 using SkiShop.Infrastructure.Services;
 using StackExchange.Redis;
 
@@ -38,6 +40,9 @@ builder.Services.AddIdentityApiEndpoints<AppUser>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<StoreContext>();
 builder.Services.AddSignalR();
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.Configure<StripeOptions>(
+    builder.Configuration.GetSection(StripeOptions.SectionName));
 
 var app = builder.Build();
 

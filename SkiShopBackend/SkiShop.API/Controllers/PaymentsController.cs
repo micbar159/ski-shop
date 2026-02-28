@@ -11,7 +11,8 @@ using Stripe;
 
 namespace SkiShop.API.Controllers;
 
-public class PaymentsController(IPaymentService paymentService,
+public class PaymentsController(
+    IPaymentService paymentService,
     IUnitOfWork unit,
     IHubContext<NotificationHub> hubContext,
     ILogger<PaymentsController> logger,

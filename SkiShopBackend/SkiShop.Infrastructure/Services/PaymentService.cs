@@ -1,6 +1,7 @@
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using SkiShop.Core.Entities;
 using SkiShop.Core.Interfaces;
+using SkiShop.Infrastructure.Options;
 using Stripe;
 
 namespace SkiShop.Infrastructure.Services;
@@ -10,14 +11,18 @@ public class PaymentService : IPaymentService
     private readonly ICartService cartService;
     private readonly IUnitOfWork unit;
 
-    public PaymentService(IConfiguration config, ICartService cartService,
+    public PaymentService(
+        IOptions<StripeOptions> stripeOptions, 
+        ICartService cartService,
         IUnitOfWork unit)
     {
-        StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
+        StripeConfiguration.ApiKey = stripeOptions.Value.SecretKey;
         this.cartService = cartService;
         this.unit = unit;
     }
 
+
+    // TODO: Refacator, calculating prices should be a logic inside shopping cart object
     public async Task<ShoppingCart?> CreateOrUpdatePaymentIntent(string cartId)
     {
         var cart = await cartService.GetCartAsync(cartId)
