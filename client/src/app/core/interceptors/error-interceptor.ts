@@ -29,6 +29,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         notificationService.showError(err.error.title || err.error);
       }
 
+       if (err.status === 403){
+        notificationService.showError('Forbidden');
+      }
+
       if (err.status === 404){
         router.navigateByUrl('/not-found');
       }

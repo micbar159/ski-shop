@@ -9,6 +9,7 @@ import { CartService } from '../../core/services/cart';
 import { Account } from '../../core/services/account';
 import { MatDivider } from '@angular/material/divider';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { IsAdminDirective } from "../../shared/directives/is-admin-directive";
 
 @Component({
   selector: 'app-header',
@@ -22,7 +23,8 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
     MatMenuTrigger,
     MatMenu,
     MatDivider,
-    MatMenuItem
+    MatMenuItem,
+    IsAdminDirective
 ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
