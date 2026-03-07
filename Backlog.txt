@@ -1,0 +1,19 @@
+Authentication using Okta. Cookie-based or Token-based authentication?
+
+Clean up the Program.cs. Every layer should regiter it's services in extension method.
+
+Investigate the Spcification Pattern, don't feel it is a good solution. Mybe we could leave base repository for simple queries/commnads like delete or getbyid.
+
+Use kubernetes to publish.
+
+Use events sent by server (SignalR alternative in .net 10) 
+
+Frontend: Use custom form input text
+
+Investigate caching mechanism
+
+Move credentials from appsettings to user secrets
+
+Bug: cart is not cleread, it is shared, even for logged out users
+
+Bug: webhook is called faster then related order is created.

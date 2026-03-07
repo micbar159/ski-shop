@@ -18,7 +18,7 @@ public class PaymentsController(
     ILogger<PaymentsController> logger,
     IConfiguration config) : BaseApiController
 {
-    private readonly string _whSecret = config["StripeSettings:WhSecret"]!;
+    private readonly string _whSecret = config["Stripe:WhSecret"]!;
 
     [Authorize]
     [HttpPost("{cartId}")]
@@ -40,6 +40,10 @@ public class PaymentsController(
     [HttpPost("webhook")]
     public async Task<IActionResult> StripeWebhook()
     {
+        //TODO: Ugly workaround. Webhook is callled faster than order is created. Need to think how to fix it.
+        //https://docs.stripe.com/webhooks#retries
+        await Task.Delay(2000);
+
         var json = await new StreamReader(Request.Body).ReadToEndAsync();
 
         try

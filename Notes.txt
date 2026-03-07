@@ -1,0 +1,1 @@
+To use local https certificate you can use: https://github.com/FiloSottile/mkcert

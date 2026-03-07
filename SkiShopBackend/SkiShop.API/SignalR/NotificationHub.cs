@@ -9,6 +9,7 @@ namespace SkiShop.API.SignalR;
 [Authorize]
 public class NotificationHub : Hub
 {
+    //We could use Redis for scalablity 
     private static readonly ConcurrentDictionary<string, string> UserConnections = new();
 
     public override Task OnConnectedAsync()
